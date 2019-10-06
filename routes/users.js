@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable no-useless-return */
 const router = require("express").Router();
 const path = require("path");
@@ -33,14 +34,12 @@ const sendUsersId = (req, res) => {
     return;
   });
 };
-router.get("/:someRequest", (req, res) => {
-  if (req.params.someRequest) {
-    res.status(404).send({ message: "Запрашиваемый ресурс не найден" });
-    return;
-  }
-});
 
 router.get("/users", sendUsers);
 router.get("/users/:id", sendUsersId);
+router.get("/:someRequest", (req, res) => {
+  res.status(404).send({ message: "Запрашиваемый ресурс не найден" });
+  return;
+});
 
 module.exports = router;
