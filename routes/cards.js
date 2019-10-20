@@ -1,18 +1,18 @@
 /* eslint-disable quotes */
 const router = require("express").Router();
-const path = require("path");
-const fs = require("fs");
 
-const sendCards = (req, res) => {
-  const dataPath = path.join(__dirname, `../data/cards.json`);
-  fs.readFile(dataPath, { encoding: "utf8" }, (err, data) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    res.send(JSON.parse(data));
-  });
-};
-router.get("/cards", sendCards);
+const {
+  getCards,
+  postCards,
+  delCards,
+  likeCard,
+  dislikeCard
+} = require("../controllers/cards");
+
+router.get("/cards", getCards);
+router.post("/cards", postCards);
+router.delete("/cards/:cardId", delCards);
+router.put("/cards/:cardId/likes", likeCard);
+router.delete("/cards/:cardId/likes", dislikeCard);
 
 module.exports = router;
