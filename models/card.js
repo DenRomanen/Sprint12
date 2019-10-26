@@ -17,7 +17,7 @@ const cardSchema = mongoose.Schema({
       },
       message: props => `${props.value} Эта строка должна быть ссылкой!`
     },
-    require: true
+    required: true
   },
   owner: {
     require: true,
