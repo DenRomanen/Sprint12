@@ -17,9 +17,16 @@ module.exports.postCards = (req, res) => {
 
 module.exports.delCards = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+
+  Card.findById(cardId).then(user => {
+    if (req.user._id == user.owner) {
+      Card.findByIdAndRemove(cardId)
+        .then(user => res.send({ data: user }))
+        .catch(err => res.status(500).send({ message: err.message }));
+    } else {
+      res.send({ message: "Это карта Вам не принадлежит" });
+    }
+  });
 };
 
 module.exports.likeCard = (req, res) => {

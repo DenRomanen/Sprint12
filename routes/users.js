@@ -5,16 +5,14 @@ const router = require("express").Router();
 const {
   getUsers,
   getUsersId,
-  postUser,
   patchProfile,
   patchAvatar
 } = require("../controllers/users");
 
-router.get("/users", getUsers);
-router.get("/users/:userId", getUsersId);
-router.post("/users", postUser);
-router.patch("/users/me", patchProfile);
-router.patch("/users/me/avatar", patchAvatar);
+router.patch("/me", patchProfile);
+router.patch("/me/avatar", patchAvatar);
+router.get("/", getUsers);
+router.get("/:userId", getUsersId);
 
 router.get("/:someRequest", (req, res) => {
   res.status(404).send({ message: "Запрашиваемый ресурс не найден" });
