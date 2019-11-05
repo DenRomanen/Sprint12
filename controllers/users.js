@@ -27,11 +27,15 @@ module.exports.getUsersId = (req, res) => {
 module.exports.postUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
 
-  bcrypt.hash(password, 10).then(hash =>
-    User.create({ name, about, avatar, email, password: hash })
-      .then(user => res.status(201).send({ data: user }))
-      .catch(err => res.status(500).send({ message: err.message }))
-  );
+  bcrypt
+    .hash(password, 10)
+    .then(hash => User.create({ name, about, avatar, email, password: hash }))
+    .then(user => {
+      res.status(201).send({ name: user.name, email: user.email });
+    })
+    .catch(err => {
+      res.status(400).send({ message: err.message });
+    });
 };
 
 module.exports.patchProfile = (req, res) => {
@@ -53,12 +57,12 @@ module.exports.patchAvatar = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-
   return User.findUserByCredentials(email, password)
     .then(user => {
       const token = jwt.sign({ _id: user._id }, "1", { expiresIn: "7d" });
       res.cookie("jwt", token, { httpOnly: true });
-      res.status(201).send({ user, token });
+
+      res.status(201).send({ token });
     })
     .catch(err => {
       res.status(401).send({ message: err.message });

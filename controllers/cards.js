@@ -11,22 +11,26 @@ module.exports.postCards = (req, res) => {
   const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
-    .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .then(card => res.status(201).send({ data: card }))
+    .catch(err => res.status(400).send({ message: err.message }));
 };
 
 module.exports.delCards = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findById(cardId).then(user => {
-    if (req.user._id == user.owner) {
-      Card.findByIdAndRemove(cardId)
-        .then(user => res.send({ data: user }))
-        .catch(err => res.status(500).send({ message: err.message }));
-    } else {
-      res.status(500).send({ message: "Это карта Вам не принадлежит" });
-    }
-  });
+  Card.findById(cardId)
+    .then(user => {
+      if (req.user._id === user.owner.id) {
+        Card.findByIdAndRemove(cardId)
+          .then(user => res.send({ data: user }))
+          .catch(err => res.status(500).send({ message: err.message }));
+      } else if (user.length <= 0) {
+        res.send({ message: "не найдено карточек" });
+      } else {
+        res.status(403).send({ message: "Это карта Вам не принадлежит" });
+      }
+    })
+    .catch(err => res.status(500).send({ message: err.message }));
 };
 
 module.exports.likeCard = (req, res) => {

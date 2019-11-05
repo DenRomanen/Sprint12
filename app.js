@@ -1,6 +1,8 @@
 /* eslint-disable quotes */
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 const { login, postUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
@@ -13,12 +15,15 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useFindAndModify: false,
   useUnifiedTopology: true
 });
-
 const { PORT = 3000 } = process.env;
 const app = express();
 
-app.use(express.static("public"));
-app.use(express.json());
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+/*app.use(express.static("public"));
+app.use(express.json());*/
 
 app.post("/signin", login);
 app.post("/signup", postUser);

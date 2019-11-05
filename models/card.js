@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 /* eslint-disable object-shorthand */
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const cardSchema = mongoose.Schema({
   name: {
