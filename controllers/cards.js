@@ -24,7 +24,7 @@ module.exports.delCards = (req, res) => {
         .then(user => res.send({ data: user }))
         .catch(err => res.status(500).send({ message: err.message }));
     } else {
-      res.send({ message: "Это карта Вам не принадлежит" });
+      res.status(500).send({ message: "Это карта Вам не принадлежит" });
     }
   });
 };

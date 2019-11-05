@@ -14,7 +14,13 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUsersId = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then(user => res.send({ data: user }))
+    .then(user => {
+      if (user == null) {
+        res.status(404).send({ message: "Пользователь не найден" });
+      } else {
+        res.send({ data: user });
+      }
+    })
     .catch(err => res.status(500).send({ message: err.message }));
 };
 
@@ -23,7 +29,7 @@ module.exports.postUser = (req, res) => {
 
   bcrypt.hash(password, 10).then(hash =>
     User.create({ name, about, avatar, email, password: hash })
-      .then(user => res.send({ data: user }))
+      .then(user => res.status(201).send({ data: user }))
       .catch(err => res.status(500).send({ message: err.message }))
   );
 };

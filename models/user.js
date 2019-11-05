@@ -11,20 +11,20 @@ const userSchema = mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 20,
-    require: true
+    required: true
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 20,
-    require: true
+    required: true
   },
 
   avatar: {
     type: String,
     validate: {
       validator: function(v) {
-        return /^(http:[\/][\/]|https:[\/][\/])/.test(v);
+        return validator.isURL(v);
       },
       message: props => `${props.value} Эта строка должна быть ссылкой!`
     },

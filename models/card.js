@@ -13,7 +13,7 @@ const cardSchema = mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /^(http:[\/][\/]|https:[\/][\/])/.test(v);
+        return validator.isURL(v);
       },
       message: props => `${props.value} Эта строка должна быть ссылкой!`
     },
