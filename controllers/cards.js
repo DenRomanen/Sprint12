@@ -17,10 +17,12 @@ module.exports.postCards = (req, res) => {
 
 module.exports.delCards = (req, res) => {
   const { cardId } = req.params;
-
   Card.findById(cardId)
+
     .then(user => {
-      if (req.user._id === user.owner.id) {
+      console.log(typeof req.user._id);
+      console.log(typeof user.owner.toString());
+      if (req.user._id === user.owner.toString()) {
         Card.findByIdAndRemove(cardId)
           .then(user => res.send({ data: user }))
           .catch(err => res.status(500).send({ message: err.message }));
