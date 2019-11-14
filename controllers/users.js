@@ -5,66 +5,113 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then(users => res.send({ data: users }))
-    .catch(err => res.status(500).send({ message: err.message }));
+const {
+  NotFoundError,
+  InternalServerError
+} = require("../errors/errorsStatus");
+
+const userServerErrorRequest = (req, res, next) => {
+  req
+    .then(user => {
+      if (!user) {
+        throw new InternalServerError("Произошла ошибка сервера");
+      }
+      res.status(200).send({ data: user });
+    })
+    .catch(next);
 };
 
-module.exports.getUsersId = (req, res) => {
+module.exports.getUsers = (req, res) => {
+  userServerErrorRequest(User.find({}), res);
+};
+
+module.exports.getUsersId = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
     .then(user => {
       if (user == null) {
-        res.status(404).send({ message: "Пользователь не найден" });
+        throw new NotFoundError("Пользователь не найден");
       } else {
         res.send({ data: user });
       }
     })
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.postUser = (req, res) => {
+module.exports.postUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
 
   bcrypt
     .hash(password, 10)
-    .then(hash => User.create({ name, about, avatar, email, password: hash }))
+    .then(hash =>
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash
+      })
+    )
     .then(user => {
       res.status(201).send({ name: user.name, email: user.email });
     })
-    .catch(err => {
-      res.status(400).send({ message: err.message });
-    });
+    .catch(next);
 };
 
 module.exports.patchProfile = (req, res) => {
   const owner = req.user._id;
 
   const { name, about } = req.body;
-  User.findByIdAndUpdate(owner, { name: name, about: about }, { new: true })
+  userServerErrorRequest(
+    User.findByIdAndUpdate(
+      owner,
+      { name: name, about: about },
+      { runValidators: true },
+      { new: true }
+    ),
+    res
+  );
+
+  /*User.findByIdAndUpdate(owner, { name: name, about: about }, { new: true })
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => res.status(500).send({ message: err.message }));*/
 };
 
 module.exports.patchAvatar = (req, res) => {
   const owner = req.user._id;
   const { avatar } = req.body;
-  User.findByIdAndUpdate(owner, { avatar: avatar }, { new: true })
+
+  userServerErrorRequest(
+    User.findByIdAndUpdate(
+      owner,
+      { avatar: avatar },
+      { runValidators: true },
+      { new: true }
+    ),
+    res
+  );
+
+  /* User.findByIdAndUpdate(owner, { avatar: avatar }, { new: true })
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => res.status(500).send({ message: err.message }));*/
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  const { NODE_ENV, JWT_SECRET } = process.env;
   return User.findUserByCredentials(email, password)
     .then(user => {
-      const token = jwt.sign({ _id: user._id }, "1", { expiresIn: "7d" });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
+        { expiresIn: "7d" }
+      );
       res.cookie("jwt", token, { httpOnly: true });
 
       res.status(201).send({ token });
     })
-    .catch(err => {
+    .catch(next);
+  /*.catch(err => {
       res.status(401).send({ message: err.message });
-    });
+    });*/
 };
