@@ -30,8 +30,11 @@ router.patch(
   "/me/avatar",
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().required()
-      //  .regex(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/)
+      avatar: Joi.string()
+        .required()
+        .regex(
+          /^(http:[\/][\/]|https:[\/][\/])(((\d{1,3}[\.]){3}\d{1,3}([:]\d{2,5})?)[\/]?|(w{3}[\.])?\w+([\.]\w+)?([^www][\.][a-zA-Z]{2,5})([\/]\w+)*(#)?[\/]?)/
+        )
     })
   }),
   patchAvatar

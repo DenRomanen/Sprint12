@@ -19,8 +19,11 @@ router.post(
         .required()
         .min(2)
         .max(30),
-      link: Joi.string().required()
-      //.regex(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/)
+      link: Joi.string()
+        .required()
+        .regex(
+          /^(http:[\/][\/]|https:[\/][\/])(((\d{1,3}[\.]){3}\d{1,3}([:]\d{2,5})?)[\/]?|(w{3}[\.])?\w+([\.]\w+)?([^www][\.][a-zA-Z]{2,5})([\/]\w+)*(#)?[\/]?)/
+        )
     })
   }),
   postCards

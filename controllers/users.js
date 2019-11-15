@@ -1,5 +1,6 @@
 /*
  eslint-disable object-shorthand */
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
