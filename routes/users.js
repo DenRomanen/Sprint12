@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable quotes */
 /* eslint-disable no-useless-return */
 const router = require("express").Router();

@@ -9,7 +9,7 @@ const User = require("../models/user");
 const {
   NotFoundError,
   InternalServerError
-} = require("../errors/errorsStatus");
+} = require("../errors/errorsStatus").default.default;
 
 const userServerErrorRequest = (req, res, next) => {
   req
@@ -72,10 +72,6 @@ module.exports.patchProfile = (req, res) => {
     ),
     res
   );
-
-  /*User.findByIdAndUpdate(owner, { name: name, about: about }, { new: true })
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));*/
 };
 
 module.exports.patchAvatar = (req, res) => {
@@ -91,10 +87,6 @@ module.exports.patchAvatar = (req, res) => {
     ),
     res
   );
-
-  /* User.findByIdAndUpdate(owner, { avatar: avatar }, { new: true })
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));*/
 };
 
 module.exports.login = (req, res, next) => {
@@ -112,7 +104,4 @@ module.exports.login = (req, res, next) => {
       res.status(201).send({ token });
     })
     .catch(next);
-  /*.catch(err => {
-      res.status(401).send({ message: err.message });
-    });*/
 };

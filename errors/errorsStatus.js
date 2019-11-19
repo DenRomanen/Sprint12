@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 class BadRequesrError extends Error {
   constructor(message) {
     super(message);
