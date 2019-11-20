@@ -1,4 +1,6 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable quotes */
+
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -83,7 +85,8 @@ app.use("/users", users);
 
 app.use(errorLogger);
 
-app.use(errors()); //celebrate
+app.use(errors());
+// celebrate
 
 app.use(error);
 
